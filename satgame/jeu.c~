@@ -1,0 +1,141 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include"struct.h"
+#include"lecture.h"
+#include"affichage.h"
+#include"jeu.h"
+
+/******************************************* regarde s'il ya un literal vert dans une clause *****************************************/
+
+int clause_satisfaite(lit* unlit){
+    int pres =0;
+    while(unlit != NULL){
+        if ( unlit->col == GREEN ){
+            return 1;
+        }
+        unlit=unlit->next;
+    }
+    
+    return pres;
+}
+    
+
+
+
+
+
+/******************************************** fonction : partie pas encore finie **********************************************************/
+
+int partie_finie(){ // renvoie 0 ça veut dire que la partie n'est pas fini 
+    int i;
+    int pres = 1;
+    for ( i=0 ; i < nbClauses ; i++ ){
+        if ( clause_satisfaite(clauses[i])==0)
+            return 0;
+    }
+    printf("%d\n",pres);
+    return pres;
+    
+}
+
+
+
+
+
+/********************************************************** MENU ***********************************************************/
+
+int menu(){
+    char aide;
+    
+    printf("vous demandez une aide pour :\n");
+    printf("\t réinitialiser le jeu ,taper r ou R\n");
+    printf("\t avoir la solution du jeu, taper s ou S\n");
+    do{
+        printf("entrer votre choix:");
+        scanf("\n%c",&aide);
+          } while ( (aide < 114 || aide > 115) && ( aide < 82 || aide > 83) );
+    return aide;
+} 
+
+
+
+
+/*********************************** demander au joueur de rentrer un nombre**************************************/            
+
+int rentrer_nombre(){
+    int nb_rentre;
+    do{
+            printf("entrer un nombre:");
+            
+            fscanf(stdin,"%d",&nb_rentre);
+            printf("le nombre que vous avez rentré:%d",nb_rentre);
+            printf("\n"); } while ( nb_rentre > nbVar || nb_rentre < -nbVar);
+            
+    return nb_rentre;
+}
+
+
+
+
+
+
+/************************************************* la fonction pour jouer **********************************************************/
+
+void jouer(){
+    char prop;
+    int i;
+    char signe;
+    lit* unlit;
+    
+    printf("pour une aide entrez le chiffre 0\n");
+    
+    
+    
+    do{ 
+        int nb = rentrer_nombre();
+        if ( nb > 0 ) 
+            signe = '+';
+        else if ( nb < 0 )
+            signe = '-';
+            
+        else {
+            prop = menu();
+            
+        }
+        
+        
+        
+        for( i=0 ; i < nbClauses ; i++ ){
+            unlit = clauses[i] ;
+            
+            while ( unlit != NULL ){ 
+                if ( nb == unlit->val && signe == unlit->signe && unlit->col==WHITE){
+                    
+                    unlit->col = GREEN;    
+                }
+                
+                else if ( -nb == unlit->val  && unlit->col == WHITE) {
+                
+                    unlit->col = RED;
+                }
+                
+                else if ( nb == unlit->val  && unlit->col != WHITE)
+                     unlit->col = WHITE;
+                
+                
+                    unlit = unlit->next;      
+               
+             }
+  
+        } 
+       
+        afficher_table();
+     
+         
+    }while(partie_finie()!=1);
+       
+            
+   printf("***********félicitation  vous avez gagné *************\n");
+   
+    
+}    
